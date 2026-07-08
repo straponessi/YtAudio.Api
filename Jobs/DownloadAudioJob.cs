@@ -40,7 +40,7 @@ namespace YtAudio.Api.Jobs
                 var tempDir = storage.CreateTempDirectory();
                 var tempFile = await ytDlp.DownloadBestAudioAsync(task.YoutubeUrl, tempDir, ct);
 
-                var finalPath = storage.MoveToStorage(tempFile, meta.YoutubeId);
+                var finalPath = storage.MoveToStorage(tempFile, meta.YoutubeId, meta.Title, meta.Artist, meta.Album);
                 var fileInfo = new FileInfo(finalPath);
 
                 var track = new Track
@@ -49,6 +49,7 @@ namespace YtAudio.Api.Jobs
                     YoutubeId = meta.YoutubeId,
                     Title = meta.Title,
                     Artist = meta.Artist,
+                    Album = meta.Album,
                     ThumbnailUrl = meta.ThumbnailUrl,
                     DurationSeconds = meta.DurationSeconds,
                     FilePath = finalPath,
@@ -79,7 +80,7 @@ namespace YtAudio.Api.Jobs
                 task.Status = DownloadStatus.Failed;
                 task.ErrorMessage = ex.Message;
                 await db.SaveChangesAsync(CancellationToken.None);
-                throw; 
+                throw;
             }
         }
 

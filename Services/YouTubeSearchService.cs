@@ -5,7 +5,7 @@ namespace YtAudio.Api.Services
 {
     public class YouTubeSearchService(IConfiguration config, ILogger<YouTubeSearchService> logger)
     {
-        private readonly string _apiKey = config["Youtube:ApiKey"] 
+        private readonly string _apiKey = config["Youtube:ApiKey"]
             ?? throw new InvalidOperationException("YouTube:ApiKey is missing.");
 
         public async Task<List<YouTubeSearchResult>> SearchAsync(string query, int maxResults = 8, CancellationToken ct = default)
