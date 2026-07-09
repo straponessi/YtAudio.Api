@@ -47,15 +47,12 @@ namespace YtAudio.Api.Services
                 "--add-metadata",
                 "--convert-thumbnails jpg",
                 "--no-playlist",
-                $"--js-runtimes \"{_nodePath}\"",
+                $"--js-runtimes node:\"{_nodePath}\"",
                 $"--cookies-from-browser firefox",
                 $"--ffmpeg-location \"{_ffmpegPath}\"",
                 $"-o \"{outputDir}/%(id)s.%(ext)s\"",
                 $"\"{url}\""
             );
-
-            logger.LogCritical("yt-dlp args: {Args}", args);
-            logger.LogCritical("Node path: {NodePath}", _nodePath);
 
             await RunAsync(args, ct);
 
