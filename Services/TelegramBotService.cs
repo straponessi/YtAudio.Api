@@ -186,7 +186,7 @@ public class TelegramBotService(
             await bot.SendMessage(message.Chat.Id,
                 "🎵 *YtAudio Bot*\n\n" +
                 "Используй меня inline в любом чате:\n" +
-                "`@botusername название трека`\n\n" +
+                "`@stutaudbot название трека`\n\n" +
                 "Уже скачанные треки появятся прямо как аудио.\n" +
                 "Новые — скачаются и придут сюда в личку.\n\n" +
                 "/status — статус последних задач",
@@ -243,10 +243,9 @@ public class TelegramBotService(
             }
         }
 
-        var fileName = track.Title + track.FileExtension;
         var msg = await bot.SendAudio(
             chatId,
-            InputFile.FromStream(stream, fileName),
+            InputFile.FromStream(stream, $"{track.Title}.{track.FileExtension}"),
             title: track.Title,
             performer: track.Artist,
             thumbnail: thumbnail,
