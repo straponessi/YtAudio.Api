@@ -3,6 +3,7 @@ using Telegram.Bot;
 using YtAudio.Api.Data;
 using YtAudio.Api.Models;
 using YtAudio.Api.Services;
+using YtAudio.Api.Utils;
 
 namespace YtAudio.Api.Jobs;
 
@@ -52,12 +53,13 @@ public class TelegramDownloadAndSendJob(
             var tempFile = await ytDlp.DownloadBestAudioAsync(task.YoutubeUrl, tempDir, ct);
             var finalPath = storage.MoveToStorage(tempFile, meta.YoutubeId, meta.Title, meta.Artist, meta.Album);
             var fileInfo = new FileInfo(finalPath);
+            var fileName = StringExtensions.BuildFileName(meta.YoutubeId ,meta.Title);
 
             var track = new Track
             {
                 Id = Guid.NewGuid(),
                 YoutubeId = meta.YoutubeId,
-                Title = meta.Title,
+                Title = fileName,
                 Artist = meta.Artist,
                 Album = meta.Album,
                 ThumbnailUrl = meta.ThumbnailUrl,

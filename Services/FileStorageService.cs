@@ -1,4 +1,5 @@
 using System.Text;
+using YtAudio.Api.Utils;
 
 namespace YtAudio.Api.Services
 {
@@ -7,9 +8,6 @@ namespace YtAudio.Api.Services
         private readonly string _storageRoot;
         private readonly string _tempRoot;
         private readonly ILogger<FileStorageService> _logger;
-
-        private static readonly char[] InvalidNameChars = ['\\', '/', ':', '*', '?', '"', '<', '>', '|'];
-        private const int MaxFileNameLength = 150;
 
         public FileStorageService(IConfiguration config, ILogger<FileStorageService> logger)
         {
@@ -36,7 +34,7 @@ namespace YtAudio.Api.Services
         public string MoveToStorage(string tempFilePath, string youtubeId, string title, string? artist, string? album)
         {
             var ext = Path.GetExtension(tempFilePath);
-            var fileName = BuildFileName(youtubeId, title) + ext;
+            var fileName = StringExtensions.BuildFileName(youtubeId, title) + ext;
 
             var destination = MakeUnique(Path.Combine(_storageRoot, fileName));
 
@@ -72,39 +70,6 @@ namespace YtAudio.Api.Services
                 TrackCount = files.Length,
                 TotalBytes = files.Sum(f => new FileInfo(f).Length)
             };
-        }
-
-        private static string BuildFileName(string youtubeId, string title)
-        {
-            var parts = new List<string>();
-
-            var titlePart = !string.IsNullOrWhiteSpace(title) ? SanitizeComponent(title) : youtubeId;
-            parts.Add(titlePart);
-
-            var name = string.Join(" - ", parts);
-
-            return name.Length > MaxFileNameLength
-                ? name[..MaxFileNameLength].TrimEnd()
-                : name;
-        }
-
-        private static string SanitizeComponent(string value)
-        {
-            var sb = new StringBuilder(value.Length);
-
-            foreach (var c in value)
-                sb.Append(InvalidNameChars.Contains(c) || char.IsControl(c) ? '-' : c);
-
-            var cleaned = sb.ToString();
-
-            while (cleaned.Contains("  "))
-                cleaned = cleaned.Replace("  ", " ");
-            while (cleaned.Contains("--"))
-                cleaned = cleaned.Replace("--", "-");
-
-            cleaned = cleaned.Trim(' ', '-', '.');
-
-            return cleaned.Length > 0 ? cleaned : "untitled";
         }
 
         private static string MakeUnique(string destination)

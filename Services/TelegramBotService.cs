@@ -243,9 +243,10 @@ public class TelegramBotService(
             }
         }
 
+        var fileName = track.Title + track.FileExtension;
         var msg = await bot.SendAudio(
             chatId,
-            InputFile.FromStream(stream, $"{track.Title}.{track.FileExtension}"),
+            InputFile.FromStream(stream, fileName),
             title: track.Title,
             performer: track.Artist,
             thumbnail: thumbnail,
